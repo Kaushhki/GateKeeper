@@ -1,0 +1,74 @@
+"""
+This is the proof step: we spin up multiple SEPARATE OS PROCESSES
+(not threads — actual independent processes, like separate server
+instances would be) and have them all hammer the SAME Redis-backed
+bucket concurrently. If the limit holds exactly at `capacity` despite
+many processes racing against each other, that's the real evidence
+the distributed coordination works.
+
+Run with: python3 04_load_test_multiprocess.py
+Requires a running Redis instance (redis-server, or Docker).
+"""
+
+import multiprocessing
+import redis
+from redis_token_bucket import RedisTokenBucket  # see note below
+
+
+def worker(process_id, num_requests, result_queue):
+    r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+    bucket = RedisTokenBucket(r, capacity=CAPACITY, refill_rate=0, key_prefix="loadtest")
+
+    allowed_count = 0
+    for _ in range(num_requests):
+        if bucket.allow_request("shared-client"):
+            allowed_count += 1
+
+    result_queue.put((process_id, allowed_count))
+
+
+CAPACITY = 100  # the limit we expect to be enforced, total, across ALL processes
+
+if __name__ == "__main__":
+    NUM_PROCESSES = 10
+    REQUESTS_PER_PROCESS = 30  # 10 * 30 = 300 total attempts against a cap of 100
+
+    r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+    try:
+        r.ping()
+    except redis.exceptions.ConnectionError:
+        print("Could not connect to Redis. Start it first (redis-server or Docker).")
+        raise SystemExit(1)
+
+    r.delete("loadtest:shared-client")  # clean slate before the test
+
+    result_queue = multiprocessing.Queue()
+    processes = []
+
+    for i in range(NUM_PROCESSES):
+        p = multiprocessing.Process(target=worker, args=(i, REQUESTS_PER_PROCESS, result_queue))
+        processes.append(p)
+
+    for p in processes:
+        p.start()
+    for p in processes:
+        p.join()
+
+    results = {}
+    while not result_queue.empty():
+        pid, count = result_queue.get()
+        results[pid] = count
+
+    total_allowed = sum(results.values())
+    total_attempted = NUM_PROCESSES * REQUESTS_PER_PROCESS
+
+    print(f"Capacity (the limit we want enforced): {CAPACITY}")
+    print(f"Total requests attempted across {NUM_PROCESSES} separate processes: {total_attempted}")
+    print(f"Total requests ALLOWED: {total_allowed}")
+    print(f"Per-process breakdown: {results}")
+
+    if total_allowed == CAPACITY:
+        print(f"\nCorrect: exactly {CAPACITY} requests allowed across {NUM_PROCESSES} "
+              f"independent processes racing concurrently against shared Redis state.")
+    else:
+        print(f"\nMismatch: expected exactly {CAPACITY}, got {total_allowed}.")
