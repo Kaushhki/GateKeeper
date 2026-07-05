@@ -25,7 +25,18 @@ from redis_token_bucket import RedisTokenBucket
 app = Flask(__name__)
 
 r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+import os
 
+def _reset_redis_connection_after_fork():
+    """
+    When gunicorn forks into multiple worker processes, each worker
+    inherits a copy of the same Redis connection, which causes them
+    to contend with each other. This forces each worker to drop the
+    inherited connection and open a fresh one on first use.
+    """
+    r.connection_pool.disconnect()
+
+os.register_at_fork(after_in_child=_reset_redis_connection_after_fork)
 # Capacity: 5 requests per client. Refill rate: 1 token every 2 seconds.
 limiter = RedisTokenBucket(r, capacity=5, refill_rate=0.5, key_prefix="api_limiter")
 
