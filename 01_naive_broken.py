@@ -22,11 +22,9 @@ class NaiveTokenBucket:
     def allow_request(self):
         self._refill()
         if self.tokens >= 1:
-            # ---- THE RACE CONDITION LIVES HERE ----
-            # Between checking "self.tokens >= 1" and the next line
-            # decrementing it, another thread can run and also pass
-            # the check, using the SAME token twice.
-            time.sleep(0.0001)  # exaggerate the window to make the bug visible
+            
+
+            time.sleep(0.0001)  
             self.tokens -= 1
             return True
         return False
