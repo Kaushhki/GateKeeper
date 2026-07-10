@@ -2,20 +2,8 @@ import threading
 import time
 
 class ThreadSafeTokenBucket:
-    """
-    A correct, thread-safe Token Bucket for a SINGLE process.
+   
 
-    Fix: wrap the check-then-act sequence (_refill -> check -> decrement)
-    in a Lock, so only one thread can execute that critical section at a time.
-    This makes the whole "check, then take a token" operation atomic
-    from the perspective of any other thread in this process.
-
-    Limitation this does NOT solve: if you run this same code in TWO
-    separate processes (e.g. two instances of your API server), each
-    process gets its OWN bucket and its OWN lock. The lock only protects
-    against other threads in the SAME process — it knows nothing about
-    the other process. That's the problem Redis solves later.
-    """
     def __init__(self, capacity, refill_rate):
         self.capacity = capacity
         self.tokens = capacity
@@ -34,7 +22,7 @@ class ThreadSafeTokenBucket:
         with self.lock:
             self._refill()
             if self.tokens >= 1:
-                time.sleep(0.0001)  # same artificial delay as before, on purpose
+                time.sleep(0.0001)  
                 self.tokens -= 1
                 return True
             return False
