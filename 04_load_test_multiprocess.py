@@ -21,7 +21,7 @@ CAPACITY = 100
 
 if __name__ == "__main__":
     NUM_PROCESSES = 10
-    REQUESTS_PER_PROCESS = 30  # 10 * 30 = 300 total attempts against a cap of 100
+    REQUESTS_PER_PROCESS = 30  
 
     r = redis.Redis(host="localhost", port=6379, decode_responses=True)
     try:
