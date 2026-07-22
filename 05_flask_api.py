@@ -1,13 +1,7 @@
+
+
+
 """
-A small Flask API protected by the distributed rate limiter.
-
-The idea: any real endpoint (here, a fake "/data" endpoint standing in
-for something expensive — a DB query, a third-party API call, etc.)
-gets a per-client rate limit enforced BEFORE the request is allowed to
-do any real work. Run multiple instances of this app (different ports)
-and they all correctly share ONE limit per client, because the state
-lives in Redis, not in any single Flask process.
-
 Run with:
     python3 05_flask_api.py
 Then in another terminal try multiple instances on different ports:
