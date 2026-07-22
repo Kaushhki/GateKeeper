@@ -1,14 +1,4 @@
-"""
-This is the proof step: we spin up multiple SEPARATE OS PROCESSES
-(not threads — actual independent processes, like separate server
-instances would be) and have them all hammer the SAME Redis-backed
-bucket concurrently. If the limit holds exactly at `capacity` despite
-many processes racing against each other, that's the real evidence
-the distributed coordination works.
 
-Run with: python3 04_load_test_multiprocess.py
-Requires a running Redis instance (redis-server, or Docker).
-"""
 
 import multiprocessing
 import redis
