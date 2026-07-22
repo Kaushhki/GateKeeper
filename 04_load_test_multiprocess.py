@@ -2,7 +2,7 @@
 
 import multiprocessing
 import redis
-from redis_token_bucket import RedisTokenBucket  # see note below
+from redis_token_bucket import RedisTokenBucket  
 
 
 def worker(process_id, num_requests, result_queue):
