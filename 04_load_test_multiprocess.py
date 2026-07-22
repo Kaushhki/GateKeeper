@@ -30,7 +30,7 @@ if __name__ == "__main__":
         print("Could not connect to Redis. Start it first (redis-server or Docker).")
         raise SystemExit(1)
 
-    r.delete("loadtest:shared-client")  # clean slate before the test
+    r.delete("loadtest:shared-client")  
 
     result_queue = multiprocessing.Queue()
     processes = []
