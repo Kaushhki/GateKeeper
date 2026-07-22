@@ -17,7 +17,7 @@ def worker(process_id, num_requests, result_queue):
     result_queue.put((process_id, allowed_count))
 
 
-CAPACITY = 100  # the limit we expect to be enforced, total, across ALL processes
+CAPACITY = 100  
 
 if __name__ == "__main__":
     NUM_PROCESSES = 10
