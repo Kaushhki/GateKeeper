@@ -35,6 +35,6 @@ def test_separate_clients_have_independent_buckets(redis_client):
 def test_tokens_refill_over_time(redis_client):
     bucket = RedisTokenBucket(redis_client, capacity=1, refill_rate=10)  
     assert bucket.allow_request("client1") is True
-    assert bucket.allow_request("client1") is False  # no tokens left
+    assert bucket.allow_request("client1") is False  
     time.sleep(0.2)  # wait for refill (10 tokens/sec * 0.2s = 2 tokens)
     assert bucket.allow_request("client1") is True  # should have refilled
