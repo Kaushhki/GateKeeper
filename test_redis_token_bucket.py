@@ -7,7 +7,7 @@ from redis_token_bucket import RedisTokenBucket
 @pytest.fixture
 def redis_client():
     client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
-    client.flushdb()  # start each test with a clean Redis
+    client.flushdb() 
     yield client
     client.flushdb()  # clean up after test too
 
