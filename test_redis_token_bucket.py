@@ -29,7 +29,7 @@ def test_blocks_requests_over_capacity(redis_client):
 def test_separate_clients_have_independent_buckets(redis_client):
     bucket = RedisTokenBucket(redis_client, capacity=1, refill_rate=0)
     assert bucket.allow_request("clientA") is True
-    assert bucket.allow_request("clientB") is True  # different client, own bucket
+    assert bucket.allow_request("clientB") is True  
 
 
 def test_tokens_refill_over_time(redis_client):
