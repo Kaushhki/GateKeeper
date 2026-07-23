@@ -9,7 +9,7 @@ def redis_client():
     client = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
     client.flushdb() 
     yield client
-    client.flushdb()  # clean up after test too
+    client.flushdb() 
 
 
 def test_allows_requests_within_capacity(redis_client):
