@@ -41,7 +41,7 @@ def hammer(bucket, results, thread_id, num_requests=20):
 if __name__ == "__main__":
     NUM_THREADS = 10
     REQUESTS_PER_THREAD = 20
-    CAPACITY = 50  # we only want 50 requests allowed, total, across ALL threads
+    CAPACITY = 50  
 
     bucket = NaiveTokenBucket(capacity=CAPACITY, refill_rate=0)  # no refill, isolate the bug
     results = {}
