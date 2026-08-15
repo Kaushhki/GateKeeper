@@ -37,4 +37,4 @@ def test_tokens_refill_over_time(redis_client):
     assert bucket.allow_request("client1") is True
     assert bucket.allow_request("client1") is False  
     time.sleep(0.2) 
-    assert bucket.allow_request("client1") is True 
+    assert bucket.allow_request("client1") is True
