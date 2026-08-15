@@ -43,7 +43,7 @@ if __name__ == "__main__":
     REQUESTS_PER_THREAD = 20
     CAPACITY = 50  
 
-    bucket = NaiveTokenBucket(capacity=CAPACITY, refill_rate=0)  # no refill, isolate the bug
+    bucket = NaiveTokenBucket(capacity=CAPACITY, refill_rate=0)  
     results = {}
     threads = []
 
