@@ -38,7 +38,7 @@ def hammer(bucket, results, thread_id, num_requests=20):
 
 if __name__ == "__main__":
     NUM_THREADS = 10
-    REQUESTS_PER_THREAD = 20
+    REQUESTS_PER_THREAD = 20 #change according to as per requirement
     CAPACITY = 50
 
     bucket = ThreadSafeTokenBucket(capacity=CAPACITY, refill_rate=0)
